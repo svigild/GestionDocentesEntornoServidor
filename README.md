@@ -1,8 +1,11 @@
 # Proyecto: Gestion de Docentes
 
 **Alumno:** Sergio Vigil Díaz
+
 **Asignatura:** Desarrollo Web en Entorno Servidor (DWES)
+
 **Curso:** 2024/2025
+
 **Tecnologia:** Java 17 (o 21) + Spring Boot 3 + MySQL + Bootstrap 5
 
 ---
