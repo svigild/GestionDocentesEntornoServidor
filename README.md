@@ -1,4 +1,6 @@
 # Proyecto: Gestion de Docentes
+<img width="1919" height="919" alt="image" src="https://github.com/user-attachments/assets/c2f48f6e-f2d7-4b7c-bbfb-bd4a74dbb2a0" />
+
 
 **Alumno:** Sergio Vigil Díaz
 
