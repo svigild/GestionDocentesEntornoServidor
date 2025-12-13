@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::section})}">
+<head></head>
+<body>
+<section>
+
+    <div class="d-flex align-items-center mb-4">
+        <a href="/web/guardias/panel" class="btn btn-light rounded-circle me-3 border shadow-sm"><i class="bi bi-arrow-left"></i></a>
+        <div>
+            <h4 class="fw-bold m-0">Resultado de Asignación</h4>
+            <p class="text-muted small m-0">El algoritmo ha seleccionado al candidato óptimo.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="card border-0 shadow-lg overflow-hidden">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+
+                        <div class="col-md-5 bg-light text-center p-5 border-end">
+                            <div class="mb-3">
+                                <div class="avatar mx-auto bg-danger text-white fs-2 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 80px; height: 80px;">
+                                    <span th:text="${ausente.siglas}">AU</span>
+                                </div>
+                            </div>
+                            <h5 class="fw-bold text-danger mb-1">Docente Ausente</h5>
+                            <h4 class="mb-1" th:text="${ausente.nombre} + ' ' + ${ausente.apellidos}">Nombre Ausente</h4>
+                            <span class="badge bg-white text-muted border border-secondary-subtle rounded-pill px-3">
+                                <i class="bi bi-building"></i> <span th:text="${ausente.departamento.nombre}">Depto</span>
+                            </span>
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center justify-content-center bg-white py-4 position-relative">
+                            <div class="bg-primary text-white rounded-circle p-3 shadow position-absolute" style="z-index: 10;">
+                                <i class="bi bi-arrow-right fs-4 d-none d-md-block"></i>
+                                <i class="bi bi-arrow-down fs-4 d-md-none"></i>
+                            </div>
+                            <div class="border-top border-2 w-100 position-absolute d-none d-md-block" style="top: 50%; z-index: 1;"></div>
+                        </div>
+
+                        <div class="col-md-5 bg-success bg-opacity-10 text-center p-5">
+                            <div th:if="${sustituto != null}">
+                                <div class="mb-3">
+                                    <div class="avatar mx-auto bg-success text-white fs-2 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 80px; height: 80px;">
+                                        <span th:text="${sustituto.siglas}">SU</span>
+                                    </div>
+                                </div>
+                                <h5 class="fw-bold text-success mb-1">Sustituto Asignado</h5>
+                                <h4 class="mb-1" th:text="${sustituto.nombre} + ' ' + ${sustituto.apellidos}">Nombre Sustituto</h4>
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-building"></i> <span th:text="${sustituto.departamento.nombre}">Depto</span>
+                                </p>
+                                <div class="alert alert-success d-inline-block py-1 px-3 small m-0 border-success border-opacity-25">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Carga Baja: <strong th:text="${sustituto.guardiasRealizadas}">0</strong> Guardias
+                                </div>
+                            </div>
+
+                            <div th:unless="${sustituto != null}">
+                                <i class="bi bi-emoji-dizzy fs-1 text-muted mb-3 d-block"></i>
+                                <h5 class="fw-bold text-secondary">No se encontró sustituto</h5>
+                                <p class="small text-muted">No hay docentes disponibles en la base de datos.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white p-4 text-center border-top">
+                    <p class="mb-3 text-muted">Se ha actualizado automáticamente el contador de guardias del sustituto.</p>
+                    <a href="/web/guardias/panel" class="btn btn-dark px-4 fw-medium">
+                        <i class="bi bi-check-lg me-2"></i> Confirmar y Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>

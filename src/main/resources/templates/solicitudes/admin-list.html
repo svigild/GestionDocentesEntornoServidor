@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::section})}">
+<head></head>
+<body>
+<section>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold m-0">Administración de Solicitudes</h4>
+      <p class="text-muted small m-0">Valida y gestiona las peticiones pendientes.</p>
+    </div>
+    <div>
+      <button class="btn btn-white border shadow-sm"><i class="bi bi-download"></i> Exportar</button>
+      <button class="btn btn-primary"><i class="bi bi-filter"></i> Filtrar</button>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm overflow-hidden">
+    <div class="table-responsive">
+      <table class="table align-middle table-hover mb-0">
+        <thead class="bg-light border-bottom">
+        <tr>
+          <th class="ps-4 py-3 text-uppercase text-muted small fw-bold">Docente</th>
+          <th class="py-3 text-uppercase text-muted small fw-bold">Departamento</th>
+          <th class="py-3 text-uppercase text-muted small fw-bold">Fecha Solicitada</th>
+          <th class="py-3 text-uppercase text-muted small fw-bold">Prioridad (Algoritmo)</th>
+          <th class="py-3 text-uppercase text-muted small fw-bold">Estado</th>
+          <th class="pe-4 py-3 text-end text-uppercase text-muted small fw-bold">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="solicitud : ${todasSolicitudes}">
+          <td class="ps-4 py-3">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold me-3"
+                   style="width: 35px; height: 35px; font-size: 0.8rem;"
+                   th:text="${#strings.substring(solicitud.docente.nombre,0,1) + #strings.substring(solicitud.docente.apellidos,0,1)}">JD</div>
+              <div>
+                <div class="fw-bold text-dark" th:text="${solicitud.docente.nombre} + ' ' + ${solicitud.docente.apellidos}">Nombre</div>
+                <div class="small text-muted" th:text="${solicitud.docente.email}">email@educastur.org</div>
+              </div>
+            </div>
+          </td>
+
+          <td>
+                            <span class="badge bg-light text-secondary border fw-normal"
+                                  th:text="${solicitud.docente.departamento.codigo}">DEP</span>
+          </td>
+
+          <td class="fw-bold text-dark">
+            <i class="bi bi-calendar-event me-2 text-muted"></i>
+            <span th:text="${solicitud.diaSolicitado}">2024-01-01</span>
+          </td>
+
+          <td>
+            <div class="small text-muted" th:if="${solicitud.docente.tipoFuncionario == 1}">Carrera</div>
+            <div class="small text-muted" th:if="${solicitud.docente.tipoFuncionario == 2}">Prácticas</div>
+            <div class="small text-muted" th:if="${solicitud.docente.tipoFuncionario == 3}">Interino</div>
+            <div class="d-flex align-items-center gap-1">
+              <i class="bi bi-star-fill text-warning" style="font-size: 0.6rem;"></i>
+              <span class="small fw-bold" th:text="${solicitud.docente.notaOposicion}">8.5</span>
+            </div>
+          </td>
+
+          <td>
+            <span th:if="${solicitud.aprobado == null}" class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 rounded-pill">Pendiente</span>
+            <span th:if="${solicitud.aprobado == true}" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">Aprobado</span>
+            <span th:if="${solicitud.aprobado == false}" class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill">Rechazado</span>
+          </td>
+
+          <td class="pe-4 text-end">
+            <div th:if="${solicitud.aprobado == null}">
+              <a th:href="@{'/web/admin/accion/' + ${solicitud.id} + '/true'}"
+                 class="btn btn-success btn-sm rounded-circle shadow-sm me-1" title="Aprobar">
+                <i class="bi bi-check-lg"></i>
+              </a>
+              <a th:href="@{'/web/admin/accion/' + ${solicitud.id} + '/false'}"
+                 class="btn btn-danger btn-sm rounded-circle shadow-sm" title="Rechazar">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+            <div th:unless="${solicitud.aprobado == null}" class="text-muted small">
+              <i class="bi bi-lock-fill"></i> Cerrado
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div th:if="${#lists.isEmpty(todasSolicitudes)}" class="text-center py-5">
+      <div class="mb-3 text-muted opacity-25">
+        <i class="bi bi-inbox fs-1"></i>
+      </div>
+      <h6 class="fw-bold text-muted">No hay solicitudes registradas</h6>
+    </div>
+  </div>
+
+</section>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Nombre,Apellidos,Email,Siglas,CodigoDept,Rol,TipoFuncionario,Nota
+Sergio,Martinez,sergio@educastur.org,SM,IFC,Profesor,1,9.5
+Laura,Gonzalez,laura@educastur.org,LG,IFC,Profesor,2,8.2
+Admin,Principal,admin@educastur.org,ADM,IFC,Dirección,1,10.0
+David,Alvarez,david@educastur.org,DA,ING,Profesor,3,6.5
+Maria,Suarez,maria@educastur.org,MS,FOL,Jefatura,1,9.0

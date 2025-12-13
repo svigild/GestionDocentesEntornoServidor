@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::section})}">
+<head></head>
+<body>
+<section>
+
+  <style>
+    /* Diseñé un Grid CSS de 7 columnas para simular un calendario mensual real */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .calendar-header {
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      color: #6c757d;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    .calendar-day {
+      min-height: 120px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .calendar-day:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+
+    .day-number {
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    /* Resalto el día actual en azul para mejor orientación */
+    .day-today {
+      background-color: #eff6ff;
+      border: 2px solid #3b82f6;
+    }
+
+    .day-today .day-number {
+      color: #2563eb;
+    }
+
+    /* Ajustes específicos para que al imprimir el cuadrante salga limpio y en horizontal */
+    @media print {
+      body * { visibility: hidden; }
+      .sidebar, .top-header, .btn, .no-print, form, .card-header small, .alert { display: none !important; }
+      #seccion-imprimir, #seccion-imprimir * { visibility: visible; }
+      #seccion-imprimir { position: absolute; left: 0; top: 0; width: 100%; }
+      .calendar-grid { gap: 0; border: 1px solid #000; }
+      .calendar-day, .calendar-header { border: 1px solid #000 !important; border-radius: 0 !important; min-height: 100px; }
+      .print-color { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      @page { size: landscape; margin: 0.5cm; }
+    }
+  </style>
+
+  <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <div>
+      <h4 class="fw-bold m-0 text-dark">Panel de Guardias</h4>
+      <p class="text-muted small m-0">Vista mensual de ausencias y sustituciones.</p>
+    </div>
+    <button onclick="window.print()" class="btn btn-white border shadow-sm text-secondary">
+      <i class="bi bi-printer-fill me-2"></i> Imprimir
+    </button>
+  </div>
+
+  <div id="cardGestion" class="card border-0 shadow-sm mb-4 overflow-hidden no-print">
+    <div class="card-body p-0">
+      <div class="row g-0">
+        <div class="col-md-1 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center border-end border-primary-subtle">
+          <i class="bi bi-person-workspace text-primary fs-3"></i>
+        </div>
+        <div class="col-md-11 p-4">
+          <h6 class="fw-bold text-dark mb-2">⚡ Asignación Rápida</h6>
+          <p class="text-muted small mb-3">Haz clic en "Asignar" en cualquier día del calendario para seleccionar automáticamente al docente.</p>
+
+          <form th:action="@{/web/guardias/asignar}" method="post" class="row g-2 align-items-center">
+            <div class="col-md-8">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                <select id="selectDocenteAusente" name="idDocenteAusente" class="form-select border-start-0 ps-0" required>
+                  <option value="" selected disabled>Seleccionar docente...</option>
+                  <option th:each="d : ${docentes}"
+                          th:value="${d.id}"
+                          th:data-match="${#strings.toLowerCase(d.nombre + ' ' + d.apellidos)}"
+                          th:text="${d.apellidos} + ', ' + ${d.nombre}"></option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-primary w-100 fw-medium shadow-sm">
+                Ejecutar Algoritmo
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="seccion-imprimir">
+
+    <div class="d-flex justify-content-between align-items-end mb-3">
+      <h3 class="fw-bold text-dark m-0">
+        <span th:text="${mesActual}">DICIEMBRE</span> <span class="text-muted fw-light" th:text="${anioActual}">2025</span>
+      </h3>
+      <span class="badge bg-white text-dark border shadow-sm no-print">
+            <i class="bi bi-info-circle me-1"></i> Ausencias Aprobadas
+        </span>
+    </div>
+
+    <div class="calendar-grid">
+
+      <div class="calendar-header">Lunes</div>
+      <div class="calendar-header">Martes</div>
+      <div class="calendar-header">Miércoles</div>
+      <div class="calendar-header">Jueves</div>
+      <div class="calendar-header">Viernes</div>
+      <div class="calendar-header text-danger">Sábado</div>
+      <div class="calendar-header text-danger">Domingo</div>
+
+      <div th:if="${diaSemanaInicio > 0}"
+           th:each="i : ${#numbers.sequence(1, diaSemanaInicio)}"
+           class="bg-transparent"></div>
+
+      <div th:each="dia : ${#numbers.sequence(1, diasEnElMes)}"
+           class="calendar-day"
+           th:classappend="${dia == hoy} ? 'day-today'">
+
+        <span class="day-number" th:text="${dia}">1</span>
+
+        <div th:if="${mapaAusencias.containsKey(dia)}">
+          <div th:each="ausencia : ${mapaAusencias.get(dia)}" class="mb-2">
+
+            <div th:if="${ausencia.sustituto == null}"
+                 class="p-2 rounded bg-danger bg-opacity-10 border border-danger border-opacity-25 print-color">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <i class="bi bi-person-x-fill text-danger"></i>
+                <span class="fw-bold text-danger small lh-1"
+                      th:text="${ausencia.docente.nombre} + ' ' + ${ausencia.docente.apellidos}">
+                    Nombre Profe
+                </span>
+              </div>
+
+              <button type="button"
+                      th:with="nombreRaw=${ausencia.docente.nombre + ' ' + ausencia.docente.apellidos}"
+                      th:onclick="seleccionarDocente([[${#strings.toLowerCase(nombreRaw)}]])"
+                      class="btn btn-danger btn-sm w-100 py-0 no-print"
+                      style="font-size: 0.7rem;">
+                Asignar
+              </button>
+            </div>
+
+            <div th:if="${ausencia.sustituto != null}"
+                 class="p-2 rounded bg-success bg-opacity-10 border border-success border-opacity-25 print-color">
+              <div class="d-flex align-items-center gap-2 mb-1 opacity-75">
+                <i class="bi bi-person-x text-secondary"></i>
+                <span class="text-decoration-line-through text-secondary small"
+                      th:text="${ausencia.docente.apellidos}">Apellido</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill text-success"></i>
+                <span class="fw-bold text-success small"
+                      th:text="'Cubre: ' + ${ausencia.sustituto.nombre} + ' ' + ${ausencia.sustituto.apellidos}">
+                        Cubre: Nombre
+                    </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div th:unless="${mapaAusencias.containsKey(dia)}" class="text-center mt-4 opacity-25 no-print">
+          <small>-</small>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Script para buscar y seleccionar al docente en el desplegable aunque tenga tildes o mayúsculas diferentes
+    function seleccionarDocente(nombreBuscado) {
+      const select = document.getElementById('selectDocenteAusente');
+      const cardGestion = document.getElementById('cardGestion');
+      let encontrado = false;
+
+      for (let i = 0; i < select.options.length; i++) {
+        let nombreOpcion = select.options[i].getAttribute('data-match');
+        if (nombreOpcion) {
+          // Normalizo ambos textos para ignorar acentos (NFD separa la tilde de la letra)
+          let n1 = nombreBuscado.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          let n2 = nombreOpcion.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+          if (n1.includes(n2) || n2.includes(n1)) {
+            select.selectedIndex = i;
+            encontrado = true;
+            break;
+          }
+        }
+      }
+
+      if (encontrado) {
+        // Hago scroll suave hacia arriba y destaco el campo para mejorar la UX
+        cardGestion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        select.classList.add('bg-warning', 'bg-opacity-25');
+        setTimeout(() => select.classList.remove('bg-warning', 'bg-opacity-25'), 1500);
+      } else {
+        alert("No se encontró coincidencia en la lista.");
+      }
+    }
+  </script>
+
+</section>
+</body>
+</html>

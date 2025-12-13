@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/auth-layout :: layout(~{::.auth-card})}">
+<head>
+    <title>Iniciar Sesión</title>
+</head>
+<body>
+
+<div class="card auth-card">
+    <div class="card-body p-0">
+        <div class="text-center d-flex justify-content-center align-items-center gap-3">
+            <img th:src="@{/logo-principado.png}" alt="Logo Principado" class="auth-logo">
+
+            <div style="border-left: 1px solid #ccc; height: 40px;"></div>
+
+            <img th:src="@{/logo-educastur.jpg}" alt="Logo Educastur" class="auth-logo">
+        </div>
+
+        <h2 class="auth-title">
+            campus ***
+            <span>fp distancia</span>
+        </h2>
+
+        <div th:if="${param.error}" class="alert alert-danger mb-4">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> Usuario o contraseña incorrectos. Por favor, inténtelo de nuevo.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-info mb-4">
+            <i class="bi bi-info-circle-fill me-2"></i> Has cerrado sesión correctamente.
+        </div>
+        <div th:if="${param.resetSuccess}" class="alert alert-success mb-4">
+            <i class="bi bi-check-circle-fill me-2"></i> Su contraseña ha sido cambiada con éxito. Puede acceder ahora.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="email" class="visually-hidden">Usuario</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Usuario (Email)" required>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="visually-hidden">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Acceder</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="/auth/forgot-password" class="auth-link">¿Olvidó su contraseña?</a>
+        </div>
+
+        <div class="auth-footer">
+            <div>
+                <i class="bi bi-globe me-1"></i> Español (es) <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i>
+            </div>
+            <button class="btn btn-secondary-subtle">Aviso de Cookies</button>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
