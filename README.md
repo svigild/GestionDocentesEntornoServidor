@@ -150,4 +150,11 @@ Visualizacion del horario generada dinamicamente desde Java. El sistema detecta 
 <img width="1904" height="915" alt="image" src="https://github.com/user-attachments/assets/414c7553-e72c-472c-b056-9f6b498df2da" />
 <img width="1306" height="859" alt="image" src="https://github.com/user-attachments/assets/d7859ec8-1334-425b-a76e-a3f7e0754d60" />
 
+# Cursos Completados
+
+## 1. Desarrollo de una aplicación web con Spring Boot
+Enlace al diploma https://openwebinars.net/cert/N5He
+
+
+
 
